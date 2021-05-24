@@ -28,14 +28,21 @@ public class Demo {
                 .map(painter -> painter.estimateVelocity(sqMeters))
                 .reduce(Velocity::add)
                 .orElse(Velocity.ZERO);
+
         Painter.stream(painters).available()
                 .forEach(painter -> {
                     double partialSqMeters = sqMeters * painter.estimateVelocity(sqMeters).divideBy(groupVelocity);
-                    Money partialCost = painter.estimateCompensation(partialSqMeters);
-                    Duration partialTime = painter.estimateTimeToPaint(partialSqMeters);
+                    this.print(painter, partialSqMeters);
                 });
     }
     public void run(){
+        List<Painter> painters1 = this.createPainters1();
+        double sqMeters = 200;
+
+        this.print(painters1);
+        System.out.println();
+        System.out.println("Demo #1 = Letting all painters work together");
+        this.workTogether(sqMeters, painters1);
 
     }
 }
