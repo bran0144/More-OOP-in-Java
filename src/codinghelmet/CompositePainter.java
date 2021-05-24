@@ -16,8 +16,9 @@ public class CompositePainter implements Painter{
     public boolean isAvailable() {
         return Painter.stream(this.painters).anyMatch(Painter::isAvailable);
     }
+
     @Override
-    public Duration estimateTimeTOPaint(double sqMeters) {
+    public Duration estimateTimeToPaint(double sqMeters) {
         return this.estimateTimeToPaint(sqMeters, this.estimateTotalVelocity(sqMeters));
     }
    private Duration estimateTimeToPaint(double sqMeters, Velocity totalVelocity){

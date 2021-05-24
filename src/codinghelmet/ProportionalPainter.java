@@ -22,7 +22,9 @@ public class ProportionalPainter implements Painter{
         return (int) (sqMeters / this.sqMetersPerHour * 3600);
     }
     @Override
-    public Money estimateCompensation( double sqMeters) {}
+    public Money estimateCompensation( double sqMeters) {
+        return this.rate.getTotalFor(this.estimateTimeToPaint(sqMeters));
+    }
 
     @Override
     public Duration estimateTimeToPaint(double sqMeters) {
