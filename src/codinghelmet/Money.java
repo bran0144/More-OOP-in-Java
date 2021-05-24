@@ -7,7 +7,12 @@ public class Money implements Comparable<Money>{
     private BigDecimal amount;
     private BigDecimal getAmount() {return this.amount;}
 
-    public static Money ZERO = new Money(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+    public static Money ZERO =
+            new Money(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+
+    public Money(BigDecimal amount) {
+        this.amount = amount.setScale(2, RoundingMode.HALF_UP);
+    }
 
     public Money scale(long multiply, long divide) {
         return this.scale(new BigDecimal(multiply), new BigDecimal(divide));
