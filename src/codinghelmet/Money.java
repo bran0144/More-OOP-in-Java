@@ -1,11 +1,34 @@
 package codinghelmet;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class Money implements Comparable<Money>{
-    public static Money ZERO;
+    private BigDecimal amount;
+    private BigDecimal getAmount() {return this.amount;}
 
-    public Money scale(long multiply, long divide);
-    public Money scale(double factor);
-    public Money add(Money other);
+    public static Money ZERO = new Money(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
 
-    public int compareTo(Money other);
+    public Money scale(long multiply, long divide) {
+        return this.scale(new BigDecimal(multiply), new BigDecimal(divide));
+    }
+    public Money scale(double factor) {
+        BigDecimal newAmount = this.getAmount().multiply(new BigDecimal(factor));
+        return new Money(newAmount);
+    }
+    public Money add(Money other) {
+        return new Money(this.getAmount().add(other.getAmount()));
+    }
+
+    private Money scale(BigDecimal multiply, BigDecimal divide) {
+        return new Money(this.getAmount().multiply(multiply).divide(divide, 2, RoundingMode.HALF_UP));
+    }
+
+    public int compareTo(Money other) {
+        return this.getAmount().compareTo(other.amount);
+    }
+    public String toString(){
+        return "$" + this.getAmount();
+    }
+
 }

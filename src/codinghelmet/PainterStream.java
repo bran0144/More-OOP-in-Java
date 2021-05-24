@@ -15,11 +15,15 @@ public class PainterStream implements ForwardingStream<Painter> {
     public Stream<Painter> getStream() {
         return  this.stream;
     }
+
     public PainterStream available() {
         return new PainterStream(this.getStream().filter(Painter::isAvailable));
     }
+
     public Optional<Painter> cheapest(double sqMeters) {
         return this.getStream().min(Comparator.comparing(painter -> painter.estimateCompensation(sqMeters)));
     }
-
+    public Optional<Painter> fastest(double sqMeters) {
+        return this.getStream().min(Comparator.comparing(painter -> painter.estimateTimeToPaint(sqMeters)));
+    }
 }

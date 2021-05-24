@@ -1,7 +1,5 @@
 package codinghelmet;
 
-import codinghelmet.Money;
-
 import java.time.Duration;
 import java.util.List;
 
@@ -11,6 +9,9 @@ public interface Painter {
     Money estimateCompensation(double sqMeters);
     String getName();
 
+    default Velocity estimateVelocity(double sqMeters) {
+        return new Velocity(sqMeters, this.estimateTimeToPaint(sqMeters));
+    }
     static PainterStream stream(List<Painter> painters) {
         return new PainterStream(painters.stream());
     }
