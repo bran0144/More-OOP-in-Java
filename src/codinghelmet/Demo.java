@@ -1,11 +1,49 @@
 package codinghelmet;
 
+import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Demo {
+
+    private MoneyRate perHour(double amount) {
+        return MoneyRate.hourly(new Money(new BigDecimal(amount)));
+    }
+    private List<Painter> createPainters1() {
+        return Arrays.asList(
+                new ProportionalPainter("Joe", 2.12, this.perHour(44)),
+                new ProportionalPainter("Jill", 4.16, this.perHour(60)),
+                new ProportionalPainter("Jack", 1.19, this.perHour(16))
+        );
+    }
+
+    private List<Painter> createPainters2() {
+        return Arrays.asList(
+                new ProportionalPainter("Jane", 2.27, this.perHour(38)),
+                new ProportionalPainter("Jerry", 3.96, this.perHour(57)),
+                new CompressorPainter("Jeff", Duration.ofMinutes(12), 19, Duration.ofMinutes(27), 9, this.perHour(70))
+        );
+    }
+    private void print(List<Painter> painters) {
+        System.out.println("Painters:");
+        for (Painter painter: painters) {
+            System.out.println(painter);
+        }
+    }
+    private void print (Painter painter, double sqMeters) {
+        Money compensation = painter.estimateCompensation(sqMeters);
+        Duration totalTime = painter.estimateTimeToPaint(sqMeters);
+        String formattedTime = TimeUtils.format(totalTime);
+
+        System.out.printf(
+                "Letting %s print %.2f sq meters during %s at total cost %s\n",
+                painter.getName(), sqMeters, formattedTime, compensation);
+    }
+
     private static Optional<Painter> findCheapest1(double sqMeters, List<Painter> painters) {
         return painters.stream()
                 .filter(Painter::isAvailable)
@@ -44,5 +82,36 @@ public class Demo {
         System.out.println("Demo #1 = Letting all painters work together");
         this.workTogether(sqMeters, painters1);
 
+        System.out.println()
+        System.out.println("Demo #2 - Letting composite painter work:");
+        Painter group1 = new CompositePainter(painters1);
+        this.print(group1, sqMeters);
+
+        List<Painter> painters2 = this.createPainters2();
+        System.out.println();
+        System.out.println("Demo #3 - Compressor and roller painters working together");
+        this.workTogether(sqMeters, painters2);
+
+        System.out.println();
+        System.out.println("Demo #4 - Composite painter with compressor and roller painters");
+        Painter group2 = new CompositePainter(painters2);
+        this.print(group2, sqMeters);
+
+        System.out.println();
+        System.out.println("Demo #5 - Recursively composing composite painters");
+
+
+    List<Painter> painters3 = Arrays.asList(
+            painters1.get(0), painters1.get(1),
+            new CompressorPainter("Jim", Duration.ofMinutes(9), 14,
+                    Duration.ofMinutes(22), 11, this.perHour(90)), group2);
+            Painter group3 = new CompositePainter(painters3);
+            this.print(group3, sqMeters);
+
+            List<Painter> many= this.createPainters1();
+            List<Painter> available = Painter.stream(many).available().collect(Collectors.toList());
+            Painter group = new CompositePainter(many);
+            Duration duration = group.estimateTimeToPaint(sqMeters);
     }
+    )
 }
