@@ -36,16 +36,12 @@ public class CompositePainter implements Painter{
                 .max(Duration::compareTo)
                 .get();
     }
-    private Velocity estimateTotalVelocity(double sqMeters) {
-        return Painter.stream(this.painters)
-                .map(painter -> painter.estimateVelocity(sqMeters))
-                .reduce(Velocity::add)
-                .orElse(Velocity.ZERO);
-    }
+
 
     @Override
     public Money estimateCompensation(double sqMeters){
-        return this.estimateCompensation(sqMeters, this.estimateTotalVelocity(sqMeters));
+        return this.schedule(sqMeters)
+                .map(assignment -> assignment.getPainter().estimateCompensation(assignment.getSqMeters()))
     }
 
     private Money estimateCompensation(double sqMeters, Velocity totalVelocity) {
@@ -54,7 +50,19 @@ public class CompositePainter implements Painter{
                 .reduce(Money::add)
                 .orElse(Money.ZERO);
     }
-
+    private Stream<WorkAssignment> schedule(double sqMeters) {
+        return this.schedule(sqMeters, this.estimateVelocity(sqMeters));
+    }
+    private Stream<WorkAssignment> schedule(double sqMeters, Velocity totalVelocity) {
+        return Painter.stream(this.painters)
+                .map(painter -> painter.assign(sqMeters * painter.estimateVelocity(sqMeters).divideBy(totalVelocity)));
+    }
+    private Velocity estimateTotalVelocity(double sqMeters) {
+        return Painter.stream(this.painters)
+                .map(painter -> painter.estimateVelocity(sqMeters))
+                .reduce(Velocity::add)
+                .orElse(Velocity.ZERO);
+    }
     @Override
     public String getName() {
         return this.getPaintersNames()
