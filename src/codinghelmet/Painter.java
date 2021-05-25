@@ -2,9 +2,10 @@ package codinghelmet;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 public interface Painter {
-    boolean isAvailable();
+    Optional<Painter> available();
     Duration estimateTimeToPaint(double sqMeters);
     Money estimateCompensation(double sqMeters);
     String getName();

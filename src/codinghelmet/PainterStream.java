@@ -17,7 +17,10 @@ public class PainterStream implements ForwardingStream<Painter> {
     }
 
     public PainterStream available() {
-        return new PainterStream(this.getStream().filter(Painter::isAvailable));
+        return new PainterStream(this.getStream()
+        .map(Painter::available)
+        .filter(Optional::isPresent)
+        .map(Optional::get));
     }
 
     public Optional<Painter> cheapest(double sqMeters) {

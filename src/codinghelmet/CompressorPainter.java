@@ -1,6 +1,7 @@
 package codinghelmet;
 
 import java.time.Duration;
+import java.util.Optional;
 
 public class CompressorPainter implements Painter{
     private String name;
@@ -25,13 +26,18 @@ public class CompressorPainter implements Painter{
     public String getName() {return this.name;}
 
     @Override
-    public boolean isAvailable() {return true;}
-
+    public Optional<Painter> available() {
+        return Optional.of(this);
+    }
     @Override
     public Duration estimateTimeToPaint(double sqMeters) {
         Duration effectivePainting = Duration.ofSeconds((int)(sqMeters/ this.sqMetersPerHour *3600));
         int refillsCount = (int)Math.ceil(sqMeters/this.fillAfterSqMeters);
         Duration refillTime = this.fillTime.multipliedBy(refillsCount);
         return effectivePainting.plus(refillTime).plus(this.cleaningTime);
+    }
+    @Override
+    public Money estimateCompensation(double sqMeters) {
+        return this.rate.getTotalFor(this.estimateTimeToPaint(sqMeters));
     }
 }

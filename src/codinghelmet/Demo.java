@@ -82,9 +82,9 @@ public class Demo {
         System.out.println("Demo #1 = Letting all painters work together");
         this.workTogether(sqMeters, painters1);
 
-        System.out.println()
+        System.out.println();
         System.out.println("Demo #2 - Letting composite painter work:");
-        Painter group1 = new CompositePainter(painters1);
+        Optional<CompositePainter> group1 = new CompositePainter.of(painters1);
         this.print(group1, sqMeters);
 
         List<Painter> painters2 = this.createPainters2();
@@ -101,7 +101,7 @@ public class Demo {
         System.out.println("Demo #5 - Recursively composing composite painters");
 
 
-    List<Painter> painters3 = Arrays.asList(
+        List<Painter> painters3 = Arrays.asList(
             painters1.get(0), painters1.get(1),
             new CompressorPainter("Jim", Duration.ofMinutes(9), 14,
                     Duration.ofMinutes(22), 11, this.perHour(90)), group2);
@@ -110,7 +110,7 @@ public class Demo {
 
             List<Painter> many= this.createPainters1();
             List<Painter> available = Painter.stream(many).available().collect(Collectors.toList());
-            Painter group = new CompositePainter(many);
+            Painter group = new CompositePainter(available);
             Duration duration = group.estimateTimeToPaint(sqMeters);
     }
     )
