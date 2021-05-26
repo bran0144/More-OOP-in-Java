@@ -46,7 +46,9 @@ public class Demo {
 
     private static Optional<Painter> findCheapest1(double sqMeters, List<Painter> painters) {
         return painters.stream()
-                .filter(Painter::isAvailable)
+                .map(Painter::available)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .min(Comparator.comparing(painter -> painter.estimateCompensation(sqMeters)));
     }
 
@@ -55,7 +57,9 @@ public class Demo {
     }
     private static Money getTotalCost(double sqMeters, List<Painter> painters) {
         return painters.stream()
-                .filter(Painter::isAvailable)
+                .map(Painter::available)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .map(painter -> painter.estimateCompensation(sqMeters))
                 .reduce(Money::add)
                 .orElse(Money.ZERO);
@@ -84,8 +88,8 @@ public class Demo {
 
         System.out.println();
         System.out.println("Demo #2 - Letting composite painter work:");
-        Optional<CompositePainter> group1 = new CompositePainter.of(painters1);
-        this.print(group1, sqMeters);
+        Optional<CompositePainter> group1 = new CompositePainter.of(painters1, new ConstantVelocityScehduler());
+        group1.ifPresent(group -> this.print((group, sqMeters));
 
         List<Painter> painters2 = this.createPainters2();
         System.out.println();
@@ -94,24 +98,19 @@ public class Demo {
 
         System.out.println();
         System.out.println("Demo #4 - Composite painter with compressor and roller painters");
-        Painter group2 = new CompositePainter(painters2);
-        this.print(group2, sqMeters);
+        Optional<CompositePainter> group2 = new CompositePainter.of(painters2, new ConstantVelocityScehduler());
+        group2.ifPresent(group -> this.print((group, sqMeters));
 
         System.out.println();
         System.out.println("Demo #5 - Recursively composing composite painters");
 
-
-        List<Painter> painters3 = Arrays.asList(
-            painters1.get(0), painters1.get(1),
-            new CompressorPainter("Jim", Duration.ofMinutes(9), 14,
-                    Duration.ofMinutes(22), 11, this.perHour(90)), group2);
-            Painter group3 = new CompositePainter(painters3);
-            this.print(group3, sqMeters);
-
-            List<Painter> many= this.createPainters1();
-            List<Painter> available = Painter.stream(many).available().collect(Collectors.toList());
-            Painter group = new CompositePainter(available);
-            Duration duration = group.estimateTimeToPaint(sqMeters);
+        Optional<CompositePainter> group3 =
+                group2.map(group ->
+                        Arrays.asList(
+                                painters1.get(0), painters2.get(1),
+                                new CompressorPainter("Jim", Duration.ofMinutes(9), 15,
+                                        Duration.ofMinutes(22), 11, this.perHour(90)), group))
+                .flatMap(painters3 -> CompositePainter.of(painters3, new ConstantVelocityScehduler()));
+        group3.ifPresent(group -> this.print(group, sqMeters));
     }
-    )
 }
