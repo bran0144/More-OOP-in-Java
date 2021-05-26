@@ -10,59 +10,40 @@ import java.util.stream.Stream;
 public class CompositePainter implements Painter{
 
     private List<Painter> painters;
+    private PaintingScheduler scheduler;
 
-    private CompositePainter(List<Painter> painters) {
+    private CompositePainter(List<Painter> painters, PaintingScheduler scheduler) {
         this.painters = painters;
+        this.scheduler = scheduler;
     }
 
-    public static Optional<CompositePainter> of(List<Painter> painters) {
+    public static Optional<CompositePainter> of(List<Painter> painters, PaintingScheduler scheduler) {
         return painters.isEmpty()
                 ? Optional.empty()
-                : Optional.of(new CompositePainter(painters));
+                : Optional.of(new CompositePainter(painters, scheduler));
     }
     @Override
     public Optional<Painter> available() {
         return CompositePainter.of(
-            Painter.stream(this.painters).available().collect(Collectors.toList()))
+            Painter.stream(this.painters).available().collect(Collectors.toList()), this.scheduler)
                 .<Painter>map(Function.identity());
     }
     @Override
     public Duration estimateTimeToPaint(double sqMeters) {
-        return this.estimateTimeToPaint(sqMeters, this.estimateTotalVelocity(sqMeters));
-    }
-   private Duration estimateTimeToPaint(double sqMeters, Velocity totalVelocity){
-        return Painter.stream(this.painters)
-                .map(painter -> painter.estimateTimeToPaint(sqMeters * painter.estimateVelocity(sqMeters).divideBy(totalVelocity)))
+        return this.scheduler. schedule(this.painters, sqMeters)
+                .map(WorkAssignment::estimateTimeToPaint)
                 .max(Duration::compareTo)
                 .get();
     }
 
-
     @Override
     public Money estimateCompensation(double sqMeters){
-        return this.schedule(sqMeters)
-                .map(assignment -> assignment.getPainter().estimateCompensation(assignment.getSqMeters()))
-    }
-
-    private Money estimateCompensation(double sqMeters, Velocity totalVelocity) {
-        return Painter.stream(this.painters)
-                .map(painter -> painter.estimateCompensation(sqMeters * painter.estimateVelocity(sqMeters).divideBy(totalVelocity)))
+        return this.scheduler.schedule(this.painters, sqMeters)
+                .map(WorkAssignment::estimateCompensation)
                 .reduce(Money::add)
                 .orElse(Money.ZERO);
     }
-    private Stream<WorkAssignment> schedule(double sqMeters) {
-        return this.schedule(sqMeters, this.estimateVelocity(sqMeters));
-    }
-    private Stream<WorkAssignment> schedule(double sqMeters, Velocity totalVelocity) {
-        return Painter.stream(this.painters)
-                .map(painter -> painter.assign(sqMeters * painter.estimateVelocity(sqMeters).divideBy(totalVelocity)));
-    }
-    private Velocity estimateTotalVelocity(double sqMeters) {
-        return Painter.stream(this.painters)
-                .map(painter -> painter.estimateVelocity(sqMeters))
-                .reduce(Velocity::add)
-                .orElse(Velocity.ZERO);
-    }
+
     @Override
     public String getName() {
         return this.getPaintersNames()
