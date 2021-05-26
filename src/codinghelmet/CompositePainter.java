@@ -12,13 +12,13 @@ public class CompositePainter implements Painter{
     private List<Painter> painters;
     private PaintingScheduler scheduler;
 
-    private CompositePainter(List<Painter> painters, PaintingScheduler scheduler) {
+    public CompositePainter(List<Painter> painters, PaintingScheduler scheduler) {
         this.painters = painters;
         this.scheduler = scheduler;
     }
 
     public static Optional<CompositePainter> of(List<Painter> painters, PaintingScheduler scheduler) {
-        return painters.isEmpty()
+        return painters.size() == 0
                 ? Optional.empty()
                 : Optional.of(new CompositePainter(painters, scheduler));
     }
