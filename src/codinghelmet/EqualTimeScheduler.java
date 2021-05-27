@@ -1,6 +1,5 @@
 package codinghelmet;
 
-import java.awt.*;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +38,7 @@ public class EqualTimeScheduler implements PaintingScheduler{
     private Duration getTotalTime(List<Painter> painters, double sqMeters, Duration lower, Duration middle, Duration upper) {
         return this.getTotalSqMeters(painters, middle) > sqMeters
                 ? this.getTotalTime(painters, sqMeters, lower, middle)
-                : this.getTotalTime((painters, sqMeters, middle, upper));
+                : this.getTotalTime((painters, sqMeters, middle, upper);
     }
 
     private double getTotalSqMeters(List<Painter> painters, Duration time) {

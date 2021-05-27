@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class Demo {
 
@@ -88,8 +87,8 @@ public class Demo {
 
         System.out.println();
         System.out.println("Demo #2 - Letting composite painter work:");
-        Optional<CompositePainter> group1 = new CompositePainter.of(painters1, new ConstantVelocityScheduler());
-        group1.ifPresent(group -> this.print((group, sqMeters));
+        Optional<CompositePainter> group1 = CompositePainter.of(painters1, new ConstantVelocityScheduler());
+        group1.ifPresent(group -> this.print(group, sqMeters));
 
         List<Painter> painters2 = this.createPainters2();
         System.out.println();
@@ -98,8 +97,8 @@ public class Demo {
 
         System.out.println();
         System.out.println("Demo #4 - Composite painter with compressor and roller painters");
-        Optional<CompositePainter> group2 = new CompositePainter.of(painters2, new EqualTimeScheduler());
-        group2.ifPresent(group -> this.print((group, sqMeters));
+        Optional<CompositePainter> group2 = CompositePainter.of(painters2, new EqualTimeScheduler());
+        group2.ifPresent(group -> this.print(group, sqMeters));
 
         System.out.println();
         System.out.println("Demo #5 - Recursively composing composite painters");
