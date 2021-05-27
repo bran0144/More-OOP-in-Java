@@ -13,37 +13,26 @@ public class EqualTimeScheduler implements PaintingScheduler{
                 .orElse(WorkAssignment.stream(Stream.empty()));
     }
     private Optional<Duration> getUpperDuration(List<Painter> painters, double sqMeters) {
-        return Painter.stream(painters)
-                .map(painter -> painter.estimateTimeToPaint(sqMeters))
-                .min(Duration::compareTo);
+        return Painter.stream(painters).timesToPaint(sqMeters).min();
     }
     private WorkStream scheduleNonEmpty(
             List<Painter> painters, double sqMeters, Duration upper) {
-        return this.scheduleNonEmpty(painters, this.getTotalTime(painters, sqMeters, upper));
+        return this.scheduleNonEmpty(painters, this.totalTime(painters, sqMeters, upper));
     }
 
     private WorkStream scheduleNonEmpty(
             List<Painter> painters, Duration totalTime) {
         return Painter.stream(painters).assign(totalTime);
     }
-    private Duration getTotalTime(List<Painter> painters, double sqMeters, Duration upper) {
-        return this.getTotalTime(painters, sqMeters, Duration.ZERO, upper);
-    }
-    private Duration getTotalTime(List<Painter> painters, double sqMeters, Duration lower, Duration upper) {
-        return upper.minus(lower).compareTo(Duration.ofMillis(1)) <= 0
-                ? lower
-                :getTotalTime(painters, sqMeters, lower, upper.plus(lower).dividedBy(2), upper);
-    }
-    private Duration getTotalTime(List<Painter> painters, double sqMeters, Duration lower, Duration middle, Duration upper) {
-        return this.getTotalSqMeters(painters, middle) > sqMeters
-                ? this.getTotalTime(painters, sqMeters, lower, middle)
-                : this.getTotalTime(painters, sqMeters, middle, upper);
+    private Duration totalTime(List<Painter> painters, double sqMeters, Duration upper) {
+        return DurationRange.zeroTo(upper)
+                .bisect(time -> this.totalSqMeters(painters, time))
+                .convergeTo(sqMeters, Duration.ofMillis(1))
+                .middle();
     }
 
-    private double getTotalSqMeters(List<Painter> painters, Duration time) {
-        return Painter.stream(painters)
-                .mapToDouble(painter -> painter.estimateSqMeters(time))
-                .sum();
+    private double totalSqMeters(List<Painter> painters, Duration time) {
+        return Painter.stream(painters).estimateSqMeters(time);
     }
 
 }
