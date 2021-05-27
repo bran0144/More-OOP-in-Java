@@ -1,5 +1,6 @@
 package codinghelmet;
 
+import java.awt.*;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +20,17 @@ public class EqualTimeScheduler implements PaintingScheduler{
     }
     private Stream<WorkAssignment> scheduleNonEmpty(
             List<Painter> painters, double sqMeters, Duration upper) {
-        Duration lower = Duration.ZERO;
+        return this.scheduleNonEmpty(painters, getTotalTime(painters, sqMeters, upper));
+    }
+
+    private Stream<WorkAssignment> scheduleNonEmpty(
+            List<Painter> painters, Duration totalTime) {
+        return Painter.stream(painters)
+                .map(painter -> painter.assign(painter.estimateSqMeters(totalTime)));
+    }
         //use bisection algorithm
+    private Duration getTotalTime(List<Painter> painters, double sqMeters, Duration upper) {
+        Duration lower = Duration.ZERO;
 
         while (upper.minus(lower).compareTo(Duration.ofMillis(1)) > 0) {
             Duration middle = upper.plus(lower).dividedBy(2);
@@ -34,7 +44,7 @@ public class EqualTimeScheduler implements PaintingScheduler{
                 lower = middle;
             }
         }
-        return null;
+    return lower;
     }
 
 }
