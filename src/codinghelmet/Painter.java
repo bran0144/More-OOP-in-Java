@@ -18,8 +18,8 @@ public interface Painter {
         return new WorkAssignment(this, sqMeters);
     }
 
-    static PainterStream stream(List<Painter> painters) {
-        return new PainterStream(painters.stream());
+    static PaintersStream stream(List<Painter> painters) {
+        return new PaintersStream(painters.stream());
     }
 }
 

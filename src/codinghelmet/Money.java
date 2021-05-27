@@ -2,6 +2,7 @@ package codinghelmet;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.stream.Stream;
 
 public class Money implements Comparable<Money>{
     private BigDecimal amount;
@@ -10,6 +11,9 @@ public class Money implements Comparable<Money>{
     public static Money ZERO =
             new Money(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
 
+    public static MoneyStream stream(Stream<Money> moneys) {
+        return new MoneyStream(moneys);
+    }
     public Money(BigDecimal amount) {
         this.amount = amount.setScale(2, RoundingMode.HALF_UP);
     }
