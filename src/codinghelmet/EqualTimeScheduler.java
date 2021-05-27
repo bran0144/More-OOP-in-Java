@@ -44,7 +44,7 @@ public class EqualTimeScheduler implements PaintingScheduler{
 
     private double getTotalSqMeters(List<Painter> painters, Duration time) {
         return Painter.stream(painters)
-                .mapToDouble(painter -> painter.estimateSqmeters(time))
+                .mapToDouble(painter -> painter.estimateSqMeters(time))
                 .sum();
     }
 

@@ -34,6 +34,9 @@ public class ProportionalPainter implements Painter {
     public Duration estimateTimeToPaint(double sqMeters) {
         return Duration.ofSeconds(this.getSecondstoPaint(sqMeters));
     }
+    public double estimateSqMeters(Duration time) {
+        return this.sqMetersPerHour * (time.getSeconds() / (double) 3600);
+    }
     public String toString(){
         return String.format(
                 "%s painting %.2f sq meters per hour at rate %s",

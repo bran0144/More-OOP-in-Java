@@ -9,6 +9,7 @@ public interface Painter {
     Duration estimateTimeToPaint(double sqMeters);
     Money estimateCompensation(double sqMeters);
     String getName();
+    double estimateSqMeters(Duration time);
 
     default Velocity estimateVelocity(double sqMeters) {
         return new Velocity(sqMeters, this.estimateTimeToPaint(sqMeters));

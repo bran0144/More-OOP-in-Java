@@ -43,6 +43,12 @@ public class CompositePainter implements Painter{
                 .reduce(Money::add)
                 .orElse(Money.ZERO);
     }
+    @Override
+    public double estimateSqMeters(Duration time) {
+        return Painter.stream(painters)
+                .mapToDouble(painter -> painter.estimateSqMeters(time))
+                .sum();
+    }
 
     @Override
     public String getName() {
