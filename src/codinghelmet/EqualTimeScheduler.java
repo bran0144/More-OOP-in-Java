@@ -28,23 +28,24 @@ public class EqualTimeScheduler implements PaintingScheduler{
         return Painter.stream(painters)
                 .map(painter -> painter.assign(painter.estimateSqMeters(totalTime)));
     }
-        //use bisection algorithm
     private Duration getTotalTime(List<Painter> painters, double sqMeters, Duration upper) {
-        Duration lower = Duration.ZERO;
+        return this.getTotalTime(painters, sqMeters, Duration.ZERO, upper);
+    }
+    private Duration getTotalTime(List<Painter> painters, double sqMeters, Duration lower, Duration upper) {
+        return upper.minus(lower).compareTo(Duration.ofMillis(1)) <= 0
+                ? lower
+                :getTotalTime(painters, sqMeters, lower, upper.plus(lower).dividedBy(2), upper);
+    }
+    private Duration getTotalTime(List<Painter> painters, double sqMeters, Duration lower, Duration middle, Duration upper) {
+        return this.getTotalSqMeters(painters, middle) > sqMeters
+                ? this.getTotalTime(painters, sqMeters, lower, middle)
+                : this.getTotalTime((painters, sqMeters, middle, upper));
+    }
 
-        while (upper.minus(lower).compareTo(Duration.ofMillis(1)) > 0) {
-            Duration middle = upper.plus(lower).dividedBy(2);
-            double actualSqMeters =
-                    Painter.stream(painters)
-                    .mapToDouble(painter -> painter.estimateSqMeters(middle))
-                    .sum();
-            if (actualSqMeters > sqMeters) {
-                upper = middle;
-            }else {
-                lower = middle;
-            }
-        }
-    return lower;
+    private double getTotalSqMeters(List<Painter> painters, Duration time) {
+        return Painter.stream(painters)
+                .mapToDouble(painter -> painter.estimateSqmeters(time))
+                .sum();
     }
 
 }
