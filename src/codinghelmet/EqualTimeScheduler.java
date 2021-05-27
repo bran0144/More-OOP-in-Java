@@ -24,8 +24,7 @@ public class EqualTimeScheduler implements PaintingScheduler{
 
     private WorkStream scheduleNonEmpty(
             List<Painter> painters, Duration totalTime) {
-        return WorkAssignment.stream(Painter.stream(painters)
-                .map(painter -> painter.assign(painter.estimateSqMeters(totalTime))));
+        return Painter.stream(painters).assign(totalTime);
     }
     private Duration getTotalTime(List<Painter> painters, double sqMeters, Duration upper) {
         return this.getTotalTime(painters, sqMeters, Duration.ZERO, upper);

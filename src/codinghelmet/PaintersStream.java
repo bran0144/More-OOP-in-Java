@@ -29,6 +29,10 @@ public class PaintersStream implements ForwardingStream<Painter> {
     public double estimateSqMeters(Duration time) {
         return this.getStream().mapToDouble(painter -> painter.estimateSqMeters(time)).sum();
     }
+    public WorkStream assign(Duration time) {
+        return WorkAssignment.stream(
+                this.getStream().map(painter -> painter.assign(painter.estimateSqMeters(time))));
+    }
     public Optional<Painter> workTogether(PaintingScheduler scheduler) {
         return CompositePainter.of(this.stream.collect(Collectors.toList()), scheduler)
                 .map(Function.identity());
