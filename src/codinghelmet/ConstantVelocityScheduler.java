@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ConstantVelocityScehduler implements PaintingScheduler{
+public class ConstantVelocityScheduler implements PaintingScheduler{
 
     @Override
     public Stream<WorkAssignment> schedule(List<Painter> painters, double sqMeters) {
@@ -12,13 +12,11 @@ public class ConstantVelocityScehduler implements PaintingScheduler{
     }
     private Stream<WorkAssignment> schedule(List<Painter> painters, double sqMeters, Velocity totalVelocity) {
         return Painter.stream(painters)
-                .available()
                 .map(painter -> painter.assign(
-                        sqMeters*painter.estimateVelocity(sqMeters).divideBy(totalVelocity)));
+                        sqMeters * painter.estimateVelocity(sqMeters).divideBy(totalVelocity)));
     }
     private Velocity estimateTotalVelocity(List<Painter> painters, double sqMeters) {
         return Painter.stream(painters)
-                .available()
                 .map(painter -> painter.estimateVelocity(sqMeters))
                 .reduce(Velocity::add)
                 .orElse(Velocity.ZERO);

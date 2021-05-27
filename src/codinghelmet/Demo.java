@@ -88,7 +88,7 @@ public class Demo {
 
         System.out.println();
         System.out.println("Demo #2 - Letting composite painter work:");
-        Optional<CompositePainter> group1 = new CompositePainter.of(painters1, new ConstantVelocityScehduler());
+        Optional<CompositePainter> group1 = new CompositePainter.of(painters1, new ConstantVelocityScheduler());
         group1.ifPresent(group -> this.print((group, sqMeters));
 
         List<Painter> painters2 = this.createPainters2();
@@ -98,7 +98,7 @@ public class Demo {
 
         System.out.println();
         System.out.println("Demo #4 - Composite painter with compressor and roller painters");
-        Optional<CompositePainter> group2 = new CompositePainter.of(painters2, new ConstantVelocityScehduler());
+        Optional<CompositePainter> group2 = new CompositePainter.of(painters2, new ConstantVelocityScheduler());
         group2.ifPresent(group -> this.print((group, sqMeters));
 
         System.out.println();

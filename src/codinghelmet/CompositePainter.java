@@ -12,7 +12,7 @@ public class CompositePainter implements Painter{
     private List<Painter> painters;
     private PaintingScheduler scheduler;
 
-    public CompositePainter(List<Painter> painters, PaintingScheduler scheduler) {
+    private CompositePainter(List<Painter> painters, PaintingScheduler scheduler) {
         this.painters = painters;
         this.scheduler = scheduler;
     }
@@ -30,7 +30,7 @@ public class CompositePainter implements Painter{
     }
     @Override
     public Duration estimateTimeToPaint(double sqMeters) {
-        return this.scheduler. schedule(this.painters, sqMeters)
+        return this.scheduler.schedule(this.painters, sqMeters)
                 .map(WorkAssignment::estimateTimeToPaint)
                 .max(Duration::compareTo)
                 .get();
