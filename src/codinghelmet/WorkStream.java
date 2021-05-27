@@ -15,7 +15,7 @@ public class WorkStream implements ForwardingStream<WorkAssignment>{
     public MoneyStream compensations() {
         return Money.stream(this.stream.map(WorkAssignment::estimateCompensation));
     }
-    public DurationStream timesToPaint() {
-        return new DurationStream(this.stream.map(WorkAssignment::estimateTimeToPaint));
+    public DurationsStream timesToPaint() {
+        return new DurationsStream(this.stream.map(WorkAssignment::estimateTimeToPaint));
     }
 }
