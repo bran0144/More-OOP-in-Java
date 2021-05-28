@@ -111,5 +111,23 @@ public class Demo {
                                         Duration.ofMinutes(22), 11, this.perHour(90)), group))
                 .flatMap(painters3 -> CompositePainter.of(painters3, new EqualTimeScheduler()));
         group3.ifPresent(group -> this.print(group, sqMeters));
+
+
+        PaintingScheduler[] schedulers = {
+                new EqualTimeScheduler(), SelectingScheduler.fastest(), SelectingScheduler.cheapest()};
+        for (PaintingScheduler scheduler: schedulers) {
+            OptionalAssignment assignment =
+                painters1.get(0)
+                    .with(painters1.get(1))
+                    .with(new CompressorPainter(
+                            "Jim", Duration.ofMinutes(9), 14, Duration.ofMinutes(22), 11, this.perHour(90)))
+                    .with(group2)
+                    .available()
+                    .workTogether(new EqualTimeScheduler())
+                    .assign(sqMeters);
+            System.out.println(assignment);
+
+
+        }
     }
 }
